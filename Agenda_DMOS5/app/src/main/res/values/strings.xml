@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">Agenda_DMOS5</string>
+
+    <string name="label_nome">Nome: </string>
+    <string name="label_telefone">Telefone: </string>
+    <string name="label_celular">Celular: </string>
+
+    <string name="hint_nome">Nome</string>
+    <string name="hint_telefone">Telefone</string>
+    <string name="hint_celular">Celular</string>
+
+    <string name="btn_salvar">Salvar</string>
+
+    <string name="erro_campo_obrigatorio">É necessário informar valores para os campos.</string>
+    <string name="erro_contato">Contato inválido.</string>
+
 </resources>
