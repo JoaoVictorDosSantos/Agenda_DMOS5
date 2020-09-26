@@ -2,17 +2,15 @@ package br.edu.dmos5.agenda_dmos5.view;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.Arrays;
 import java.util.List;
 
 import br.edu.dmos5.agenda_dmos5.R;
@@ -24,14 +22,12 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
     public static final int REQUESTCODE_NOVO_CONTATO = 99;
     public static final int DETALHE_ITEM_CONTATO = 98;
 
-    private ListView listViewContatos;
+    private RecyclerView recyclerViewContatos;
     private FloatingActionButton fabAdicionarContato;
-
+    private ItemContatoAdapter itemContatoAdapter;
 
     private ContatoDao contatoDao;
     private List<Contato> contatos;
-
-    private ArrayAdapter<Contato> arrayAdapterContato;
 
     public static final String KEY_NOME = "nome";
     public static final String KEY_TELEFONE = "telefone";
@@ -42,23 +38,25 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_contatos);
 
-        listViewContatos = findViewById(R.id.list_contatos);
+        recyclerViewContatos = findViewById(R.id.recylerview_contatos);
         fabAdicionarContato = findViewById(R.id.fab_adicionar_contato);
         fabAdicionarContato.setOnClickListener(this);
 
         contatoDao = new ContatoDao(this);
         contatos = contatoDao.recuperateAll();
 
-        arrayAdapterContato = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, contatos);
-        listViewContatos.setAdapter(arrayAdapterContato);
+        itemContatoAdapter = new ItemContatoAdapter(contatos);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
+        recyclerViewContatos.setLayoutManager(layoutManager);
+        recyclerViewContatos.setAdapter(itemContatoAdapter);
 
-        listViewContatos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        itemContatoAdapter.setClickListener(new RecyclerItemClickListener() {
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+            public void onItemClick(int position) {
                 Bundle args = new Bundle();
-                args.putString(KEY_NOME, contatos.get(i).getNome());
-                args.putString(KEY_TELEFONE, contatos.get(i).getTelefone());
-                args.putString(KEY_CELULAR, contatos.get(i).getCelular());
+                args.putString(KEY_NOME, contatos.get(position).getNome());
+                args.putString(KEY_TELEFONE, contatos.get(position).getTelefone());
+                args.putString(KEY_CELULAR, contatos.get(position).getCelular());
                 Intent intent = new Intent(getApplicationContext(), DetalheContatoActivity.class);
                 intent.putExtras(args);
                 startActivityForResult(intent, DETALHE_ITEM_CONTATO);
@@ -78,18 +76,19 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+        System.out.println("ContatosActivity valor : " + requestCode);
         switch (requestCode) {
             case REQUESTCODE_NOVO_CONTATO:
                 if (resultCode == RESULT_OK) {
-                    atualizaListView(contatoDao.recuperateAll());
+                    atualizaListView();
                 }
                 break;
         }
     }
 
-    private void atualizaListView(List<Contato> contatos){
-        arrayAdapterContato.clear();
-        arrayAdapterContato.addAll(contatos);
-        arrayAdapterContato.notifyDataSetChanged();
+    private void atualizaListView(){
+        contatos.clear();
+        contatos.addAll(contatoDao.recuperateAll());
+        recyclerViewContatos.getAdapter().notifyDataSetChanged();
     }
 }
