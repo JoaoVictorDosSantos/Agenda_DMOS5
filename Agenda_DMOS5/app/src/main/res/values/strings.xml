@@ -1,17 +1,40 @@
 <resources>
     <string name="app_name">Agenda_DMOS5</string>
 
+    <string name="tag">Agenda</string>
+
     <string name="label_nome">Nome: </string>
     <string name="label_telefone">Telefone: </string>
     <string name="label_celular">Celular: </string>
+    <string name="label_email">E-mail: </string>
+    <string name="label_senha">Senha: </string>
+    <string name="label_lembrar_login">Lembrar informações de login</string>
+    <string name="label_novo_usuario">Novo usuário</string>label_lembrar_login
+    <string name="logar">Logar</string>
+    <string name="label_confirme_senha">Confirme a senha: </string>
 
     <string name="hint_nome">Nome</string>
     <string name="hint_telefone">Telefone</string>
     <string name="hint_celular">Celular</string>
+    <string name="hint_email">Digite seu e-mail</string>
+    <string name="hint_senha">Digite a senha</string>
+    <string name="hint_confirme_senha">Confirme a senha</string>
 
     <string name="btn_salvar">Salvar</string>
 
     <string name="erro_campo_obrigatorio">É necessário informar valores para os campos.</string>
     <string name="erro_contato">Contato inválido.</string>
+    <string name="erro_usuario">Informar todos os campos!</string>
+    <string name="erro_confirma_senha">Senha e confirmação não conferem.</string>
+    <string name="erro_recupera_lista">Erro ao recuperar lista de usuários cadastrados.</string>
+    <string name="erro_login_msg">Erro no login</string>
+    <string name="erro_entrada_msg">Informe e-mail e senha.</string>
+
+    <string name="key_email">EMAIL</string>
+    <string name="key_senha">SENHA</string>
+    <string name="key_lembrar">LEMBRAR</string>
+
+    <string name="file_preferences">loginlocal.preferencias</string>
+    <string name="file_usuario">loginlocal.usuarios</string>
 
 </resources>

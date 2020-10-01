@@ -6,17 +6,14 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import br.edu.dmos5.agenda_dmos5.script_inicializacao.ContatoScriptSQL;
+import br.edu.dmos5.agenda_dmos5.script_inicializacao.UsuarioScriptSQL;
+
 public class SQLiteHelper extends SQLiteOpenHelper {
 
     //Constantes do Banco de Dados
-    public static final int DATABASE_VERSION = 1;
+    public static final int DATABASE_VERSION = 2;
     public static final String DATABASE_NAME = "agenda.db";
-
-    //Constantes da tabela Contato
-    public static final String TABLE_CONTATO = "contato";
-    public static final String COLUMN_NOME = "nome";
-    public static final String COLUMN_TELEFONE = "telefone";
-    public static final String COLUMN_CELULAR = "celular";
 
     //Contexto
     private Context context;
@@ -28,15 +25,22 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        String sql = "CREATE TABLE " + TABLE_CONTATO + " (";
-        sql += COLUMN_NOME + " TEXT NOT NULL, ";
-        sql += COLUMN_TELEFONE + " TEXT NOT NULL, ";
-        sql += COLUMN_CELULAR + " TEXT NOT NULL); ";
-        sqLiteDatabase.execSQL(sql);
+        sqLiteDatabase.execSQL(UsuarioScriptSQL.CREATE_TABLE);
+        sqLiteDatabase.execSQL(ContatoScriptSQL.CREATE_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        switch (oldVersion){
+            case 1 : db.execSQL(UsuarioScriptSQL.CREATE_TABLE);
+                     db.execSQL(contatoVersaoUm());
+        }
+    }
 
+    private String contatoVersaoUm(){
+        String sql = "ALTER TABLE " + ContatoScriptSQL.TABLE_CONTATO;
+               sql += " ADD " + ContatoScriptSQL.COLUMN_ID_USUARIO + " INTEGER REFERENCES ";
+               sql += UsuarioScriptSQL.TABLE_USUARIO + "(id);";
+        return sql;
     }
 }

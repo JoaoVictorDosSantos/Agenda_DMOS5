@@ -1,12 +1,15 @@
 package br.edu.dmos5.agenda_dmos5.view;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -16,6 +19,7 @@ import java.util.List;
 import br.edu.dmos5.agenda_dmos5.R;
 import br.edu.dmos5.agenda_dmos5.dao.ContatoDao;
 import br.edu.dmos5.agenda_dmos5.model.Contato;
+import br.edu.dmos5.agenda_dmos5.util.UsuarioUtil;
 
 public class ContatosActivity extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,7 +47,9 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
         fabAdicionarContato.setOnClickListener(this);
 
         contatoDao = new ContatoDao(this);
-        contatos = contatoDao.recuperateAll();
+        contatos = contatoDao.recuperatePorIdUsuario(UsuarioUtil.getInstance().getIdUsuarioLogado());
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         itemContatoAdapter = new ItemContatoAdapter(contatos);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
@@ -76,7 +82,6 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
 
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        System.out.println("ContatosActivity valor : " + requestCode);
         switch (requestCode) {
             case REQUESTCODE_NOVO_CONTATO:
                 if (resultCode == RESULT_OK) {
@@ -88,7 +93,18 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
 
     private void atualizaListView(){
         contatos.clear();
-        contatos.addAll(contatoDao.recuperateAll());
+        contatos.addAll(contatoDao.recuperatePorIdUsuario(UsuarioUtil.getInstance().getIdUsuarioLogado()));
         recyclerViewContatos.getAdapter().notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case android.R.id.home:
+                setResult(Activity.RESULT_OK);
+                finish();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

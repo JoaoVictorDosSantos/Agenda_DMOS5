@@ -7,11 +7,19 @@ public class Contato {
     private String nome;
     private String telefone;
     private String celular;
+    private Usuario usuario;
 
     public Contato(String nome, String telefone, String celular) {
         this.nome = nome;
         this.telefone = telefone;
         this.celular = celular;
+    }
+
+    public Contato(String nome, String telefone, String celular, Usuario usuario) {
+        this.nome = nome;
+        this.telefone = telefone;
+        this.celular = celular;
+        this.usuario = usuario;
     }
 
     public String getNome() {
@@ -36,6 +44,14 @@ public class Contato {
 
     public void setCelular(String celular) {
         this.celular = celular;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @NonNull
