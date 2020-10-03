@@ -6,13 +6,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.Nullable;
 
+import br.edu.dmos5.agenda_dmos5.model.Telefone;
 import br.edu.dmos5.agenda_dmos5.script_inicializacao.ContatoScriptSQL;
+import br.edu.dmos5.agenda_dmos5.script_inicializacao.EmailScriptSQL;
+import br.edu.dmos5.agenda_dmos5.script_inicializacao.TelefoneScriptSQL;
 import br.edu.dmos5.agenda_dmos5.script_inicializacao.UsuarioScriptSQL;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
     //Constantes do Banco de Dados
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "agenda.db";
 
     //Contexto
@@ -25,8 +28,9 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
-        sqLiteDatabase.execSQL(UsuarioScriptSQL.CREATE_TABLE);
         sqLiteDatabase.execSQL(ContatoScriptSQL.CREATE_TABLE);
+        sqLiteDatabase.execSQL(TelefoneScriptSQL.CREATE_TABLE);
+        sqLiteDatabase.execSQL(EmailScriptSQL.CREATE_TABLE);
     }
 
     @Override
@@ -34,6 +38,12 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         switch (oldVersion){
             case 1 : db.execSQL(UsuarioScriptSQL.CREATE_TABLE);
                      db.execSQL(contatoVersaoUm());
+
+            case 2 : db.execSQL(ContatoScriptSQL.RENOMEANDO_TABELA);
+                     db.execSQL(ContatoScriptSQL.CREATE_TABLE);
+                     db.execSQL(ContatoScriptSQL.ATUALIZANDO_CONTATOS);
+                     db.execSQL(ContatoScriptSQL.ATUALIZANDO_TELEFONE_FIXO);
+                     db.execSQL(ContatoScriptSQL.ATUALIZANDO_TELEFONE_CELULAR);
         }
     }
 

@@ -2,7 +2,7 @@ package br.edu.dmos5.agenda_dmos5.script_inicializacao;
 
 public class UsuarioScriptSQL {
 
-    //Constantes da tabela Contato
+    //Constantes da tabela usuário
     public static final String TABLE_USUARIO = "usuario";
     public static final String COLUMN_ID = "id";
     public static final String COLUMN_EMAIL = "email";

@@ -18,9 +18,11 @@ public class ContatoDao {
 
     private SQLiteDatabase sqLiteDatabase;
     private SQLiteHelper  sqlLiteHelper;
+    private Context context;
 
     public ContatoDao(Context context) {
         sqlLiteHelper = new SQLiteHelper(context);
+        this.context = context;
     }
 
     public void add(Contato contato) {
@@ -28,13 +30,26 @@ public class ContatoDao {
 
         ContentValues valores = new ContentValues();
         valores.put(ContatoScriptSQL.COLUMN_NOME, contato.getNome());
-        valores.put(ContatoScriptSQL.COLUMN_TELEFONE, contato.getTelefone());
-        valores.put(ContatoScriptSQL.COLUMN_CELULAR, contato.getCelular());
         valores.put(ContatoScriptSQL.COLUMN_ID_USUARIO, UsuarioUtil.getInstance().getIdUsuarioLogado());
 
         sqLiteDatabase = sqlLiteHelper.getWritableDatabase();
-        if(sqLiteDatabase.insert(ContatoScriptSQL.TABLE_CONTATO, null, valores) == -1){
-            throw new SQLException("Erro ao adicionar contato");
+        sqLiteDatabase.beginTransaction();
+        try{
+            if(sqLiteDatabase.insert(ContatoScriptSQL.TABLE_CONTATO, null, valores) == -1){
+                throw new SQLException("Erro ao adicionar contato");
+            }else{
+                TelefoneDao telefoneDao = new TelefoneDao(context);
+                telefoneDao.addList(contato.getTelefones(), sqLiteDatabase, contato.getId());
+                telefoneDao.addList(contato.getCelulares(), sqLiteDatabase, contato.getId());
+
+                EmailDao emailDao = new EmailDao(context);
+                emailDao.addList(contato.getEmails(), sqLiteDatabase, contato.getId());
+            }
+            sqLiteDatabase.setTransactionSuccessful();
+        }catch (Exception e){
+            throw new SQLException(e.getMessage());
+        }finally {
+            sqLiteDatabase.endTransaction();
         }
         sqLiteDatabase.close();
     }
@@ -49,9 +64,8 @@ public class ContatoDao {
 
 
         String colunas[] = new String[]{
+                ContatoScriptSQL.COLUMN_ID,
                 ContatoScriptSQL.COLUMN_NOME,
-                ContatoScriptSQL.COLUMN_TELEFONE,
-                ContatoScriptSQL.COLUMN_CELULAR,
                 ContatoScriptSQL.COLUMN_ID_USUARIO
         };
 
@@ -69,9 +83,9 @@ public class ContatoDao {
 
         while (cursor.moveToNext()){
             contato = new Contato(
-                    cursor.getString(0),
+                    cursor.getLong(0),
                     cursor.getString(1),
-                    cursor.getString(2)
+                    cursor.getLong(2)
             );
             contatos.add(contato);
         }
@@ -89,9 +103,8 @@ public class ContatoDao {
         sqLiteDatabase = sqlLiteHelper.getReadableDatabase();
 
         String colunas[] = new String[]{
+                ContatoScriptSQL.COLUMN_ID,
                 ContatoScriptSQL.COLUMN_NOME,
-                ContatoScriptSQL.COLUMN_TELEFONE,
-                ContatoScriptSQL.COLUMN_CELULAR,
                 ContatoScriptSQL.COLUMN_ID_USUARIO
         };
 
@@ -111,9 +124,9 @@ public class ContatoDao {
 
         while (cursor.moveToNext()){
             contato = new Contato(
-                    cursor.getString(0),
+                    cursor.getLong(0),
                     cursor.getString(1),
-                    cursor.getString(2)
+                    cursor.getLong(2)
             );
             contatos.add(contato);
         }
@@ -131,5 +144,42 @@ public class ContatoDao {
 
         sqLiteDatabase.update(ContatoScriptSQL.TABLE_CONTATO, valores, "1 = ?", argumentos);
         sqLiteDatabase.close();
+    }
+
+    public Contato buscaPorId(Long id) {
+        Contato contato = null;
+        Cursor cursor;
+
+        sqLiteDatabase = sqlLiteHelper.getReadableDatabase();
+
+        String colunas[] = new String[]{
+                ContatoScriptSQL.COLUMN_ID,
+                ContatoScriptSQL.COLUMN_NOME,
+                ContatoScriptSQL.COLUMN_ID_USUARIO
+        };
+
+        String where = ContatoScriptSQL.COLUMN_ID + " = ?";
+        String[] argumentos = {String.valueOf(id)};
+
+        cursor = sqLiteDatabase.query(
+                ContatoScriptSQL.TABLE_CONTATO,
+                colunas,
+                where,
+                argumentos,
+                null,
+                null,
+                null
+        );
+
+        while (cursor.moveToFirst()){
+            contato = new Contato(
+                    cursor.getLong(0),
+                    cursor.getString(1),
+                    cursor.getLong(2)
+            );
+        }
+        cursor.close();
+        sqLiteDatabase.close();
+        return contato;
     }
 }

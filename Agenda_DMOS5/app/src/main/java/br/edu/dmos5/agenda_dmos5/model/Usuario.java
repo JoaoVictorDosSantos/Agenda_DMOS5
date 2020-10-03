@@ -16,6 +16,8 @@ public class Usuario {
         this.email = email;
     }
 
+    public Usuario() {}
+
     public String getEmail() {
         return email;
     }

@@ -1,14 +1,23 @@
 package br.edu.dmos5.agenda_dmos5.view;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.TextView;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import br.edu.dmos5.agenda_dmos5.R;
+import br.edu.dmos5.agenda_dmos5.dao.ContatoDao;
+import br.edu.dmos5.agenda_dmos5.dao.EmailDao;
+import br.edu.dmos5.agenda_dmos5.dao.TelefoneDao;
 import br.edu.dmos5.agenda_dmos5.model.Contato;
+import br.edu.dmos5.agenda_dmos5.model.Telefone;
 
 public class DetalheContatoActivity extends AppCompatActivity {
 
@@ -17,6 +26,7 @@ public class DetalheContatoActivity extends AppCompatActivity {
     private TextView textViewCelular;
 
     private Contato contato;
+    private ContatoDao contatoDao;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +39,7 @@ public class DetalheContatoActivity extends AppCompatActivity {
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        contatoDao = new ContatoDao(getApplicationContext());
         extrairDados();
         exibeDados();
     }
@@ -47,17 +58,31 @@ public class DetalheContatoActivity extends AppCompatActivity {
         Bundle embrulho = intent.getExtras();
 
         if(embrulho != null){
-            String nome = embrulho.getString(ContatosActivity.KEY_NOME);
-            String telefone = embrulho.getString(ContatosActivity.KEY_TELEFONE);
-            String celular  = embrulho.getString(ContatosActivity.KEY_CELULAR);
-            contato = new Contato(nome,telefone,celular);
+            Long id = embrulho.getLong(ContatosActivity.KEY_ID);
+            contato = contatoDao.buscaPorId(id);
+            if(contato != null){
+                EmailDao emailDao = new EmailDao(getApplicationContext());
+                contato.setEmails(emailDao.buscaPorIdContato(id));
+
+                TelefoneDao telefoneDao = new TelefoneDao(getApplicationContext());
+                contato.setCelulares(telefoneDao.buscaCelularPorIdContato(id));
+                contato.setCelulares(telefoneDao.buscaFixoPorIdContato(id));
+            }
         }
     }
 
     private void exibeDados(){
         textViewNome.setText(contato.getNome());
-        textViewTelefone.setText(contato.getTelefone());
-        textViewCelular.setText(contato.getCelular());
+        textViewTelefone.setText(preparaTelefone(contato.getTelefones()));
+        textViewCelular.setText(preparaTelefone(contato.getCelulares()));
+    }
+
+    private String preparaTelefone(List<Telefone> list){
+        String retorno = "";
+        for (Telefone t: list) {
+            retorno += t.getNumero() + ";";
+        }
+        return retorno;
     }
 
     @Override

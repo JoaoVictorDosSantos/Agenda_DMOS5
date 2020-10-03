@@ -33,9 +33,7 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
     private ContatoDao contatoDao;
     private List<Contato> contatos;
 
-    public static final String KEY_NOME = "nome";
-    public static final String KEY_TELEFONE = "telefone";
-    public static final String KEY_CELULAR = "celular";
+    public static final String KEY_ID = "id";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,9 +58,7 @@ public class ContatosActivity extends AppCompatActivity implements View.OnClickL
             @Override
             public void onItemClick(int position) {
                 Bundle args = new Bundle();
-                args.putString(KEY_NOME, contatos.get(position).getNome());
-                args.putString(KEY_TELEFONE, contatos.get(position).getTelefone());
-                args.putString(KEY_CELULAR, contatos.get(position).getCelular());
+                args.putLong(KEY_ID, contatos.get(position).getId());
                 Intent intent = new Intent(getApplicationContext(), DetalheContatoActivity.class);
                 intent.putExtras(args);
                 startActivityForResult(intent, DETALHE_ITEM_CONTATO);

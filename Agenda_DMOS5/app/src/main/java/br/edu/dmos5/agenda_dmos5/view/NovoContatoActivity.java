@@ -14,15 +14,24 @@ import android.widget.EditText;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import br.edu.dmos5.agenda_dmos5.R;
 import br.edu.dmos5.agenda_dmos5.dao.ContatoDao;
 import br.edu.dmos5.agenda_dmos5.model.Contato;
+import br.edu.dmos5.agenda_dmos5.model.Email;
+import br.edu.dmos5.agenda_dmos5.model.Telefone;
+import br.edu.dmos5.agenda_dmos5.util.EmailUtil;
+import br.edu.dmos5.agenda_dmos5.util.MesagemUtil;
+import br.edu.dmos5.agenda_dmos5.util.TelefoneUtil;
 
 public class NovoContatoActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText editTextNome;
     private EditText editTextTelefone;
     private EditText editTextCelular;
+    private EditText editTextEmail;
     private Button btnSalvar;
 
     private ContatoDao contatoDao;
@@ -37,6 +46,7 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
         editTextNome = findViewById(R.id.edittext_novo_contato_nome);
         editTextTelefone = findViewById(R.id.edittext_novo_contato_telefone);
         editTextCelular = findViewById(R.id.edittext_novo_contato_celular);
+        editTextEmail = findViewById(R.id.edittext_novo_contato_email);
         btnSalvar = findViewById(R.id.btn_novo_contato_salvar);
 
         btnSalvar.setOnClickListener(this);
@@ -63,21 +73,24 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
     }
 
     private void salvarContato() {
-        String nome, telefone, celular;
+        String nome, telefone, celular, email;
         nome = editTextNome.getText().toString();
         telefone = editTextTelefone.getText().toString();
         celular = editTextCelular.getText().toString();
-
-        if(nome.isEmpty() || telefone.isEmpty() || celular.isEmpty()){
+        email = editTextEmail.getText().toString();
+        if(nome.isEmpty() || telefone.isEmpty() || celular.isEmpty() || email.isEmpty()){
             showSnackbar(getString(R.string.erro_campo_obrigatorio));
         }else{
             try {
-                contatoDao.add(new Contato(nome, telefone, celular));
+                contatoDao.add(new Contato(nome, montarTelefone(telefone, false),
+                        montarTelefone(celular, true), montaEmail(email)));
                 finalizar(true);
             }catch (SQLException e){
                 showSnackbar(e.getMessage());
             }catch (NullPointerException e){
                 showSnackbar(getString(R.string.erro_contato));
+            }catch (RuntimeException e){
+                showSnackbar(e.getMessage());
             }catch (Exception e){
                 showSnackbar("Erro ao cadastrar o contato!");
             }
@@ -99,5 +112,55 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
         ConstraintLayout constraintLayout = findViewById(R.id.layout_novo_contato);
         snackbar = Snackbar.make(constraintLayout, mensagem, Snackbar.LENGTH_SHORT);
         snackbar.show();
+    }
+
+    private List<Telefone> montarTelefone(String numeros, boolean isCelular){
+      String[] arrayNumeros = numeros.split(";");
+      List<Telefone> list = new ArrayList<>();
+      if(arrayNumeros.length == 0){
+        if(isCelular && !TelefoneUtil.isValidCelular(numeros)){
+            throw new RuntimeException(MesagemUtil.CELULAR_FORA_PADRAO);
+        }else if(!isCelular && !TelefoneUtil.isValidFixo(numeros)){
+            throw new RuntimeException(MesagemUtil.FIXO_FORA_PADRAO);
+        }
+        list.add(new Telefone(numeros, isCelular));
+      }else{
+        for (int i = 0; i < arrayNumeros.length; i++){
+            if(isCelular && !TelefoneUtil.isValidCelular(arrayNumeros[i])){
+                throw new RuntimeException(MesagemUtil.CELULAR_FORA_PADRAO);
+            }else if(!isCelular && !TelefoneUtil.isValidFixo(arrayNumeros[i])){
+                throw new RuntimeException(MesagemUtil.FIXO_FORA_PADRAO);
+            }
+            list.add(new Telefone(arrayNumeros[i], isCelular));
+        }
+      }
+      return list;
+    }
+
+    private List<Email> montaEmail(String listEmail){
+        List<Email> list = new ArrayList<>();
+        String[] emails = listEmail.split(";");
+        try {
+            if(emails.length == 0){
+                list.add(validaEmail(listEmail));
+            }else{
+                for (int i = 0; i < emails.length; i++){
+                    list.add(validaEmail(emails[i]));
+                }
+            }
+            return list;
+        }catch (RuntimeException e){
+            throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    private Email validaEmail(String email){
+        Email emailObjt = null;
+        if(EmailUtil.isValidEmail(email)){
+            emailObjt = new Email(email);
+        }else{
+            throw new RuntimeException(MesagemUtil.EMAIL_FORA_PADRAO);
+        }
+        return emailObjt;
     }
 }

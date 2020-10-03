@@ -14,11 +14,13 @@
     <string name="label_confirme_senha">Confirme a senha: </string>
 
     <string name="hint_nome">Nome</string>
-    <string name="hint_telefone">Telefone</string>
-    <string name="hint_celular">Celular</string>
+    <string name="hint_telefone">Telefone ex: (99) 9999-9999 ou 9999-9999</string>
+    <string name="hint_celular">Celular ex: (99) 99999-9999 ou 99999-9999</string>
     <string name="hint_email">Digite seu e-mail</string>
     <string name="hint_senha">Digite a senha</string>
     <string name="hint_confirme_senha">Confirme a senha</string>
+    <string name="hint_telefone_list">Informar os números separados por ;</string>
+    <string name="hint_email_list">*Informar os e-mails separados por ;</string>
 
     <string name="btn_salvar">Salvar</string>
 

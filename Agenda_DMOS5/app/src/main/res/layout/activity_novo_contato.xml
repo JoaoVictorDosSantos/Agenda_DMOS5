@@ -60,6 +60,18 @@
     />
 
     <TextView
+        android:id="@+id/textView_novo_contato_fixo_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/hint_telefone_list"
+        android:textColor="#000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_novo_contato_telefone"
+        />
+
+    <TextView
         android:id="@+id/textview_novo_contato_celular"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -69,7 +81,7 @@
         android:layout_marginTop="24dp"
         android:textSize="20dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edittext_novo_contato_telefone"
+        app:layout_constraintTop_toBottomOf="@+id/textView_novo_contato_fixo_info"
     />
 
     <EditText
@@ -84,6 +96,55 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textview_novo_contato_celular"
     />
+
+    <TextView
+        android:id="@+id/textView_novo_contato_celular_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/hint_telefone_list"
+        android:textColor="#000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_novo_contato_celular"
+        />
+
+    <TextView
+        android:id="@+id/textView_novo_contato_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_email"
+        android:textColor="#000"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:textSize="20dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView_novo_contato_celular_info"
+        />
+
+    <EditText
+        android:id="@+id/edittext_novo_contato_email"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="16dp"
+        android:hint="@string/hint_email"
+        android:inputType="textEmailAddress"
+        app:layout_constraintTop_toBottomOf="@id/textView_novo_contato_email"
+    />
+
+    <TextView
+        android:id="@+id/textView_novo_contato_email_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/hint_email_list"
+        android:textColor="#000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/edittext_novo_contato_email"
+        />
 
     <Button
         android:id="@+id/btn_novo_contato_salvar"
