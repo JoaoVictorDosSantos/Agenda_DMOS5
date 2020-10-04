@@ -44,6 +44,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
                      db.execSQL(ContatoScriptSQL.ATUALIZANDO_CONTATOS);
                      db.execSQL(ContatoScriptSQL.ATUALIZANDO_TELEFONE_FIXO);
                      db.execSQL(ContatoScriptSQL.ATUALIZANDO_TELEFONE_CELULAR);
+                     db.execSQL(ContatoScriptSQL.EXCLUIR_TABELA_RENOMEADA);
         }
     }
 

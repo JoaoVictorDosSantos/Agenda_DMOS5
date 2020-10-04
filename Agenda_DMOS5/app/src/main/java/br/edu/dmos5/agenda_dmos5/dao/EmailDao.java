@@ -47,7 +47,7 @@ public class EmailDao {
             valores.put(EmailScriptSQL.COLUMN_ID_CONTATO, idContato);
             valores.put(EmailScriptSQL.COLUMN_EMAIL, email.getEmail());
 
-            if(db.insert(TelefoneScriptSQL.TABLE_TELEFONE, null, valores) == -1){
+            if(db.insert(EmailScriptSQL.TABLE_EMAIL, null, valores) == -1){
                 throw new SQLException("Erro ao adicionar email");
             }
         }
@@ -66,7 +66,7 @@ public class EmailDao {
         String[] argumentos = {String.valueOf(idContato)};
 
         Cursor cursor = sqLiteDatabase.query(
-                UsuarioScriptSQL.TABLE_USUARIO,
+                EmailScriptSQL.TABLE_EMAIL,
                 columns,
                 where,
                 argumentos,

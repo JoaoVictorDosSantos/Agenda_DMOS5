@@ -6,7 +6,7 @@ public class TelefoneUtil {
         if (fixo == null){
             return false;
         }
-        return fixo.matches("^(\\(?\\d{2}\\)?\\s)?(\\d{5}\\-\\d{4})$");
+        return fixo.matches("^(\\(?\\d{2}\\)?\\s)?(\\d{4}\\-\\d{4})$");
     }
 
     public static boolean isValidCelular(String celular){
