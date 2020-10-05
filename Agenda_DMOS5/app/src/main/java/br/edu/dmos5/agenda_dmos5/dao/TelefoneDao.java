@@ -128,4 +128,13 @@ public class TelefoneDao {
         sqLiteDatabase.close();
         return fixos;
     }
+
+    public void deletePorIdContato(Long idContato, SQLiteDatabase sqLiteDatabase) {
+        if (idContato == null) throw new NullPointerException();
+
+        String[] argumento = {String.valueOf(idContato)};
+        String where= TelefoneScriptSQL.COLUMN_ID_CONTATO + "= ?";
+
+        sqLiteDatabase.delete(TelefoneScriptSQL.TABLE_TELEFONE, where, argumento);
+    }
 }

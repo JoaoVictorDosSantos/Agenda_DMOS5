@@ -12,6 +12,7 @@
     <string name="label_novo_usuario">Novo usuário</string>label_lembrar_login
     <string name="logar">Logar</string>
     <string name="label_confirme_senha">Confirme a senha: </string>
+    <string name="label_remover_contato">Excluir</string>
 
     <string name="hint_nome">Nome</string>
     <string name="hint_telefone">Telefone ex: (99) 9999-9999 ou 9999-9999</string>

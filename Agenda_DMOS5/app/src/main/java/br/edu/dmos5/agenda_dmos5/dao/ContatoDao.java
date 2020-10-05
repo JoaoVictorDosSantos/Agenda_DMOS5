@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import br.edu.dmos5.agenda_dmos5.model.Contato;
-import br.edu.dmos5.agenda_dmos5.model.Usuario;
 import br.edu.dmos5.agenda_dmos5.script_inicializacao.ContatoScriptSQL;
 import br.edu.dmos5.agenda_dmos5.util.UsuarioUtil;
 
@@ -181,5 +180,50 @@ public class ContatoDao {
         cursor.close();
         sqLiteDatabase.close();
         return contato;
+    }
+
+    public void atualizar(Contato contato) {
+        SQLiteHelper dbHelper = new SQLiteHelper(this.context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        if (contato == null) throw new NullPointerException();
+        ContentValues valores = new ContentValues();
+        valores.put(ContatoScriptSQL.COLUMN_NOME, contato.getNome());
+
+//        if (!contato.getFavorito()) {
+//            valores.put(ContatoContratoDao.ContatoEntry.COLUNA_FAVORITO, 0);
+//        } else {
+//            valores.put(ContatoContratoDao.ContatoEntry.COLUNA_FAVORITO, 1);
+//        }
+
+        String[] argumentos = {String.valueOf(contato.getId())};
+        String where = ContatoScriptSQL.COLUMN_ID + "= ?";
+        db.update(ContatoScriptSQL.TABLE_CONTATO, valores, where, argumentos);
+        db.close();
+    }
+
+    public void remover(Long id) {
+        if (id == null) throw new NullPointerException();
+
+        sqLiteDatabase = sqlLiteHelper.getReadableDatabase();
+        sqLiteDatabase.beginTransaction();
+        try{
+            String[] argumento = {String.valueOf(id)};
+            String where = ContatoScriptSQL.COLUMN_ID + "= ?";
+            sqLiteDatabase.delete(ContatoScriptSQL.TABLE_CONTATO, where, argumento);
+
+            TelefoneDao telefoneDao = new TelefoneDao(context);
+            telefoneDao.deletePorIdContato(id, sqLiteDatabase);
+
+            EmailDao emailDao = new EmailDao(context);
+            emailDao.removerPorIdContato(id,sqLiteDatabase);
+
+            sqLiteDatabase.setTransactionSuccessful();
+        }catch (Exception e){
+            throw new SQLException(e.getMessage());
+        }finally {
+            sqLiteDatabase.endTransaction();
+            sqLiteDatabase.close();
+        }
     }
 }

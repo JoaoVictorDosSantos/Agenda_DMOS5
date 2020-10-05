@@ -86,4 +86,13 @@ public class EmailDao {
         sqLiteDatabase.close();
         return emails;
     }
+
+    public void removerPorIdContato(Long idContato, SQLiteDatabase sqLiteDatabase) {
+        if (idContato == null) throw new NullPointerException();
+
+        String[] argumento = {String.valueOf(idContato)};
+        String where = EmailScriptSQL.COLUMN_ID_CONTATO + "= ?";
+
+        sqLiteDatabase.delete(EmailScriptSQL.TABLE_EMAIL, where, argumento);
+    }
 }

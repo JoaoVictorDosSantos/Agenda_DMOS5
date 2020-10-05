@@ -5,12 +5,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.database.SQLException;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
 
@@ -35,6 +37,7 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
     private Button btnSalvar;
 
     private ContatoDao contatoDao;
+    private Contato contato;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +45,7 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
         setContentView(R.layout.activity_novo_contato);
 
         contatoDao = new ContatoDao(getApplicationContext());
-
+        contato = null;
         editTextNome = findViewById(R.id.edittext_novo_contato_nome);
         editTextTelefone = findViewById(R.id.edittext_novo_contato_telefone);
         editTextCelular = findViewById(R.id.edittext_novo_contato_celular);
@@ -51,14 +54,35 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
 
         btnSalvar.setOnClickListener(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        extrairDados();
     }
 
     @Override
     public void onClick(View view) {
-        switch (view.getId()){
-            case R.id.btn_novo_contato_salvar:
+        if(view == btnSalvar){
+            if(contato == null){
                 salvarContato();
-                break;
+            }else{
+                atualizaContato();
+            }
+        }
+    }
+
+    private void atualizaContato() {
+        String nome;
+        nome = editTextNome.getText().toString();
+        if(nome.isEmpty()){
+            showSnackbar("Informa o campo obrigatorio");
+        }else{
+            try {
+                this.contato.setNome(nome);
+                contatoDao.atualizar(contato);
+                abrirContatos();
+            }catch (Exception e){
+                showSnackbar(e.getMessage());
+            }
+
         }
     }
 
@@ -162,5 +186,23 @@ public class NovoContatoActivity extends AppCompatActivity implements View.OnCli
             throw new RuntimeException(MesagemUtil.EMAIL_FORA_PADRAO);
         }
         return emailObjt;
+    }
+
+    private void extrairDados(){
+        Intent intent = getIntent();
+        Bundle embrulho = intent.getExtras();
+
+        if(embrulho != null){
+            Long id = embrulho.getLong(DetalheContatoActivity.KEY_ID);
+            if(id != null){
+                this.contato = contatoDao.buscaPorId(id);
+                editTextNome.setText(contato.getNome());
+            }
+        }
+    }
+
+    private void abrirContatos() {
+        Intent in = new Intent(this, ContatosActivity.class);
+        startActivity(in);
     }
 }
